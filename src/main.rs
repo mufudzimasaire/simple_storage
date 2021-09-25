@@ -11,4 +11,7 @@ fn main() {
 
 	// Store imput data
 	let _result = Database::insert(key, value);
+
+	// Read entries
+	Database::all()
 }

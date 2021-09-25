@@ -39,4 +39,14 @@ impl Database {
 		// Store data
 		let _result = std::fs::write("database.db", new_data);
 	}
+
+	pub fn all () {
+		let db = Database::new().expect("Could not initialize database");
+
+		println!("All entries");
+
+		for (key, value) in &db.data {
+			println!("{}: {}", key, value)
+		}
+	}
 }
