@@ -8,6 +8,9 @@ pub struct Database {
 }
 
 impl Database {
+	/**
+	 * Instantiates the DB
+	 */
 	fn new() -> Result<Database, std::io::Error> {
 		let mut map = HashMap::new();
 
@@ -24,6 +27,9 @@ impl Database {
 		Ok(Database { data: map })
 	}
 
+	/**
+	 * Inserts a `key` and `value` pair into the DB
+	 */
 	pub fn insert(key: Key, value: Value) {
 		let mut new_data = String::new();
 		let mut db = Database::new().expect("Could not initialize database");
@@ -40,6 +46,9 @@ impl Database {
 		let _result = std::fs::write("database.db", new_data);
 	}
 
+	/**
+	 * Returns all DB entries
+	 */
 	pub fn all () {
 		let db = Database::new().expect("Could not initialize database");
 
