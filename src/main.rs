@@ -9,9 +9,12 @@ fn main() {
 	let key = args.next().expect("Invalid key input");
 	let value = args.next().expect("Invalid value input");
 
-	// Store imput data
-	let _result = Database::insert(key, value);
+	// Initialize DB
+	let mut db = Database::new().expect("Could not initialize database");
 
-	// Read entries
-	Database::all()
+	// Store input data
+	db.insert(key, value);
+
+	// Read all entries
+	db.read_all()
 }

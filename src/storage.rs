@@ -11,37 +11,39 @@ impl Database {
 	/**
 	 * Instantiates the DB
 	 */
-	fn new() -> Result<Database, std::io::Error> {
+	pub fn new() -> Result<Database, std::io::Error> {
 		let mut map = HashMap::new();
+		let db_name = "database.db";
 
-		// Read stored data
-		let stored_data = std::fs::read_to_string("database.db").unwrap_or_default();
-		
-		// Populate map with the retrieved data
-		for line in stored_data.lines() {
-			let (key, value) = line.split_once('\t').expect("Database is corrupted!");
-			map.insert(key.to_owned(), value.to_owned());
+		if  std::path::Path::new(db_name).exists() {
+			// Read stored data
+			let stored_data = std::fs::read_to_string(db_name).unwrap();
+
+			// Populate map from the retrieved data
+			for line in stored_data.lines() {
+				let (key, value) = line.split_once('\t').expect("Database is corrupted!");
+				map.insert(key.to_owned(), value.to_owned());
+			}
 		}
 
-		// Return populated database
+		// Return database
 		Ok(Database { data: map })
 	}
 
 	/**
 	 * Inserts a `key` and `value` pair into the DB
 	 */
-	pub fn insert(key: Key, value: Value) {
-		let mut new_data = String::new();
-		let mut db = Database::new().expect("Could not initialize database");
-
+	pub fn insert(&mut self, key: Key, value: Value) {
 		// Insert new data in the DB
-		db.data.insert(key, value);
+		self.data.insert(key.to_lowercase(), value);
 
 		// Build data for storage
-		for (key, value) in &db.data {
+		let mut new_data = String::new();
+
+		for (key, value) in &self.data {
 			new_data.push_str(&format!("{}\t{}\n", key, value));
 		}
-		
+
 		// Store data
 		let _result = std::fs::write("database.db", new_data);
 	}
@@ -49,12 +51,10 @@ impl Database {
 	/**
 	 * Returns all DB entries
 	 */
-	pub fn all () {
-		let db = Database::new().expect("Could not initialize database");
-
+	pub fn read_all (&self) {
 		println!("All entries");
 
-		for (key, value) in &db.data {
+		for (key, value) in &self.data {
 			println!("{}: {}", key, value)
 		}
 	}
