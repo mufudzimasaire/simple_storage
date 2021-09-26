@@ -1,7 +1,5 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, env::Args, iter::Skip, io::Error, path::Path};
 use std::fs::{read_to_string, write};
-use std::io::Error;
-use std::path::Path;
 
 type Key = String;
 type Value = String;
@@ -34,6 +32,24 @@ impl Database {
   }
 
   /**
+   * Dynamically performs the operation specified in the args
+   */
+  pub fn call (&mut self, mut args: Skip<Args>) {
+    let operation = args.next().expect("Invalid operation");
+    
+    match &*operation {
+      "insert" => {
+        let key = args.next().expect("Invalid key input");
+        let value = args.next().expect("Invalid value input");
+
+        self.insert(key, value);
+      },
+      "list" => (self.list()),
+      _ => (println!("Cannot not perform the specified operation!")),
+    }
+  }
+
+  /**
    * Inserts a `key` and `value` pair into the DB
    */
   pub fn insert(&mut self, key: Key, value: Value) {
@@ -54,7 +70,7 @@ impl Database {
   /**
    * Returns all DB entries
    */
-  pub fn read_all (&self) {
+  pub fn list (&self) {
     println!("All entries");
 
     for (key, value) in &self.data {

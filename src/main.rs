@@ -1,20 +1,15 @@
-mod storage;
-
+mod database;
+use database::Database;
 use std::{env::Args, iter::Skip};
-use storage::Database;
 
 fn main() {
-  // Extract arguments
-  let mut args: Skip<Args> = std::env::args().skip(1);
-  let key = args.next().expect("Invalid key input");
-  let value = args.next().expect("Invalid value input");
+  // Extract the operation, key and value arguments
+  // from the command eg `simple_storage insert example_key 'the example value'`
+  let args: Skip<Args> = std::env::args().skip(1);
 
-  // Initialize DB
+  // Initialize the DB
   let mut db = Database::new().expect("Could not initialize database");
 
-  // Store input data
-  db.insert(key, value);
-
-  // Read all entries
-  db.read_all()
+  // Perform operation
+  db.call(args)
 }
