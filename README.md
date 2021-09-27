@@ -2,7 +2,9 @@
 
 This is a basic key-value store written in Rust that utilises the file system to persist data.
 
-## Getting started
+## Usage
+
+The data store supports `insert`, `select`, `list`, `delete` and `flush` operations. 
 
 To use the program, simply run the following command with the key-value pair you wish to store:
 
@@ -16,6 +18,14 @@ Run the following command with the `list` operation to view all the persisted en
 $ cargo run -- list
 ```
 
+The `select`, `delete` and `flush` operations can be used as follows -
+
+```bash
+$ cargo run -- select key
+$ cargo run -- delete key
+$ cargo run -- flush
+```
+
 Alternatively, you can build and run the binary as follows -
 
 ```bash
@@ -23,16 +33,12 @@ $ cargo build --release
 $ cd target/release/
 $ ./simple_storage insert key 'this is an example value'
 $ ./simple_storage list
-```
-
-## TODO
-
-In addition to the `insert` and `list` operations, it would be great to extend the DB API to include the ability to `read` or `delete` a specific `key`, eg. 
-
-```bash
-$ ./simple_storage read key
+$ ./simple_storage select key
 $ ./simple_storage delete key
 $ ./simple_storage flush
 ```
 
-The pattern matching used for dynamically calling operations will be converted into a macro.
+## TODO
+
+- The pattern matching used for dynamically calling operations will be converted into a macro.
+- unit specs.

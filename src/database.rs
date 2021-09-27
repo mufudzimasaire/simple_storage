@@ -28,7 +28,7 @@ impl Database {
     }
 
     // Return database
-    Ok(Database { data: map })
+    return Ok(Database { data: map })
   }
 
   /**
@@ -41,11 +41,25 @@ impl Database {
       "insert" => {
         let key = args.next().expect("Invalid key input");
         let value = args.next().expect("Invalid value input");
-
         self.insert(key, value);
       },
-      "list" => (self.list()),
-      _ => (println!("Cannot not perform the specified operation!")),
+      "select" => {
+        let key = args.next().expect("Invalid key input");
+        self.select(key);
+      },
+      "list" => {
+        self.list();
+      },
+      "delete" => {
+        let key = args.next().expect("Invalid key input");
+        self.delete(key);
+      },
+      "flush" => {
+        self.flush();
+      },
+      _ => {
+        println!("Cannot not perform the specified operation!")
+      },
     }
   }
 
@@ -55,16 +69,15 @@ impl Database {
   pub fn insert(&mut self, key: Key, value: Value) {
     // Insert new data in the DB
     self.data.insert(key.to_lowercase(), value);
+    self.save();
+  }
 
-    // Build data for storage
-    let mut new_data = String::new();
-
-    for (key, value) in &self.data {
-      new_data.push_str(&format!("{}\t{}\n", key, value));
-    }
-
-    // Store data
-    let _result = write("database.db", new_data);
+  /**
+   * Returns the associated value
+   */
+  pub fn select (&self, key: Key) {
+    let value = &self.data.get(&key.to_lowercase()).expect("Key not found!");
+    println!("{}", value)
   }
 
   /**
@@ -76,5 +89,36 @@ impl Database {
     for (key, value) in &self.data {
       println!("{}: {}", key, value)
     }
+  }
+
+  /**
+   * Deletes the `key` and associated `value` from the DB
+   */
+  pub fn delete (&mut self, key: Key) {
+    let _result = self.data.remove(&key);
+    self.save();
+  }
+
+  /**
+   * Flushes the contents of the DB
+   */
+  pub fn flush (&mut self) {
+    self.data.clear();
+    self.save();
+  }
+
+  /**
+   * Persists the data
+   */
+  fn save (&self) {
+    // Build data for storage
+    let mut new_data = String::new();
+
+    for (key, value) in &self.data {
+      new_data.push_str(&format!("{}\t{}\n", key, value));
+    }
+
+    // Store data
+    let _result = write("database.db", new_data);
   }
 }
