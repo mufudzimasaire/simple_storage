@@ -37,8 +37,3 @@ $ ./simple_storage select key
 $ ./simple_storage delete key
 $ ./simple_storage flush
 ```
-
-## TODO
-
-- The pattern matching used for dynamically calling operations will be converted into a macro.
-- unit specs.
